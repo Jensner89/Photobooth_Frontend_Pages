@@ -15,7 +15,7 @@
     $_SERVER['HTTP_HOST'] = $plw123thh['host'];
 
   $AUTH_TOKEN_PREFIX = '$Kx%!9SD5(ZJGKuCc}8dWx=#v(G8BK---';
-  $AUTH_TOKEN = $AUTH_TOKEN_PREFIX . (round(microtime(true) * 1000) + (1000 * 60));
+  $AUTH_TOKEN = $AUTH_TOKEN_PREFIX . (round(microtime(true) * 1000) + (1000 * 60 * 60 * 24));
   $USERNAME = "viewer";
   $PASSWORD = "Hochzeit-14.09.";
 
