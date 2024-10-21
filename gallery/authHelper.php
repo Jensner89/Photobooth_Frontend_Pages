@@ -33,7 +33,7 @@
     $isValid = $tokenValid && $startsWithPrefix;
 
     if($isValid){
-      header('X-Auth-Token: ' . $GLOBALS['AUTH_TOKEN']) ;
+      header('X-Auth-Token: ' . $GLOBALS['AUTH_TOKEN_PREFIX'] . (round(microtime(true) * 1000) + (1000 * 60 * 60 * 24))) ;
     }
 
     return $isValid;
