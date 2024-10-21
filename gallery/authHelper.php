@@ -30,7 +30,13 @@
       $tokenValid = true;
     }
 
-    return $tokenValid && $startsWithPrefix;
+    $isValid = $tokenValid && $startsWithPrefix;
+
+    if($isValid){
+      header('X-Auth-Token: ' . $GLOBALS['AUTH_TOKEN']) ;
+    }
+
+    return $isValid;
   }
 
   function authCheck(){
