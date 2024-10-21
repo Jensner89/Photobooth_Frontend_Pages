@@ -14,13 +14,23 @@
   if( isset( $plw123thh['host'] ) && ($plw123thh['host']!=$_SERVER['HTTP_HOST']) )
     $_SERVER['HTTP_HOST'] = $plw123thh['host'];
 
-  $AUTH_TOKEN = '$Kx%!9SD5(ZJGKuCc}8dWx=#v(G8BK';
+  $AUTH_TOKEN_PREFIX = '$Kx%!9SD5(ZJGKuCc}8dWx=#v(G8BK---';
+  $AUTH_TOKEN = $AUTH_TOKEN_PREFIX . (round(microtime(true) * 1000) + (1000 * 60));
   $USERNAME = "viewer";
   $PASSWORD = "Hochzeit-14.09.";
 
 
   function isAuthTokenValid($token) {
-    return (strcmp($GLOBALS['AUTH_TOKEN'], $token) == 0);
+    $startsWithPrefix = str_starts_with($token, $GLOBALS['AUTH_TOKEN_PREFIX']);
+    $tokenValid = false;
+    $tokenParts = explode("---", $token);
+    $currentMillis = round(microtime(true) * 1000);
+
+    if(count($tokenParts) == 2 && is_numeric($tokenParts[1]) && ($tokenParts[1] + 0) > $currentMillis){
+      $tokenValid = true;
+    }
+
+    return $tokenValid && $startsWithPrefix;
   }
 
   function authCheck(){
