@@ -4,7 +4,11 @@
     $responseObject = new StdClass;
     $reponseCode = 200;
 
-    if(authCheck()){
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        echo "";
+    }
+    else if(authCheck()){
         if (isset($_GET['file'])) {
             $requestedFile = getcwd() . $_GET['file'];
 

@@ -10,7 +10,11 @@
     $user = $input["user"];
     $password = $input["password"];
 
-    if(loginValid($user, $password)){
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        echo "";
+    }
+    else if(loginValid($user, $password)){
         $responseObject->authToken = $AUTH_TOKEN;
     }
     else{

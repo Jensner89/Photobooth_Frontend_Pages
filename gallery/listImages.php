@@ -8,7 +8,11 @@
     $responseObject = new StdClass;
     $reponseCode = 200;
 
-    if(authCheck()){
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(200);
+        echo "";
+    }
+    else if(authCheck()){
         $files = glob(getcwd() . "/images/*jpg");
         foreach ($files as &$file) {
             $imgObject = new StdClass;
