@@ -1,4 +1,7 @@
 <?php
+  include_once "JwtManager.php";
+
+
   $http_origin = $_SERVER['HTTP_ORIGIN'];
 
   if (str_contains($http_origin, 'ortwerth.com') || 
@@ -20,23 +23,37 @@
   $PASSWORD = "Hochzeit-14.09.";
 
 
+  // Create an instance of JwtManager
+  $jwtManager = new JwtManager($AUTH_TOKEN_PREFIX);
+
   function isAuthTokenValid($token) {
-    $startsWithPrefix = str_starts_with($token, $GLOBALS['AUTH_TOKEN_PREFIX']);
-    $tokenValid = false;
-    $tokenParts = explode("---", $token);
-    $currentMillis = round(microtime(true) * 1000);
-
-    if(count($tokenParts) == 2 && is_numeric($tokenParts[1]) && ($tokenParts[1] + 0) > $currentMillis){
-      $tokenValid = true;
-    }
-
-    $isValid = $tokenValid && $startsWithPrefix;
-
+    $isValid = isJwtValid($token);
     if($isValid){
-      header('X-Auth-Token: ' . $GLOBALS['AUTH_TOKEN_PREFIX'] . (round(microtime(true) * 1000) + (1000 * 60 * 60 * 24))) ;
+      header('X-Auth-Token: ' . getJwtToken()) ;
+      header('Access-Control-Expose-Headers: X-Auth-Token');
     }
-
     return $isValid;
+  }
+
+
+  function isJwtValid($jwtToValidate){
+    if ($GLOBALS['jwtManager']->validateToken($jwtToValidate)) {
+      $decodedPayload = $GLOBALS['jwtManager']->decodeToken($jwtToValidate);
+      $jsonEncodedJwt = json_encode($decodedPayload, JSON_PRETTY_PRINT);
+      return true;
+    } else {
+        return false;
+    }
+  }
+
+  function getJwtToken(){
+    $payload = [
+      "username" => "viewer",
+      "exp" => time() + 900, // Token expiration time (15 minutes)
+    ];
+   
+    $jwt = $GLOBALS['jwtManager']->createToken($payload);
+    return $jwt;
   }
 
   function authCheck(){

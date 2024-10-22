@@ -1,31 +1,37 @@
 <?php
     include "authHelper.php";
 
-    $inputJSON = file_get_contents('php://input');
-    $input = json_decode($inputJSON, TRUE); //convert JSON into array
+    try{
 
-    $responseObject = new StdClass;
-    $reponseCode = 200;
 
-    $user = $input["user"];
-    $password = $input["password"];
+        $inputJSON = file_get_contents('php://input');
+        $input = json_decode($inputJSON, TRUE); //convert JSON into array
 
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-        http_response_code(200);
-        echo "";
+        $responseObject = new StdClass;
+        $reponseCode = 200;
+
+        $user = $input["user"];
+        $password = $input["password"];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            http_response_code(200);
+            echo "";
+        }
+        else if(loginValid($user, $password)){
+            $responseObject->authToken = getJwtToken();
+        }
+        else{
+            $reponseCode = 401;
+            $responseObject->usr = $user;
+            $responseObject->passwd = $password;
+            $responseObject->error = "Invalid credentials, please authenticate!";
+        }
+
+        header('Content-Type: application/json; charset=utf-8');
+        $response = json_encode($responseObject);
+        http_response_code($reponseCode);
+
+        echo $response;
+    } catch (Exception $e){
+        echo $e->getMessage();
     }
-    else if(loginValid($user, $password)){
-        $responseObject->authToken = $AUTH_TOKEN;
-    }
-    else{
-        $reponseCode = 401;
-        $responseObject->usr = $user;
-        $responseObject->passwd = $password;
-        $responseObject->error = "Invalid credentials, please authenticate!";
-    }
-
-    header('Content-Type: application/json; charset=utf-8');
-    $response = json_encode($responseObject);
-    http_response_code($reponseCode);
-
-    echo $response;
