@@ -39,8 +39,7 @@
   function isJwtValid($jwtToValidate){
     if ($GLOBALS['jwtManager']->validateToken($jwtToValidate)) {
       $decodedPayload = $GLOBALS['jwtManager']->decodeToken($jwtToValidate);
-      $jsonEncodedJwt = json_encode($decodedPayload, JSON_PRETTY_PRINT);
-      return true;
+      return ($decodedPayload["exp"] + 0 ) > time();
     } else {
         return false;
     }
